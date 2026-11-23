@@ -1,0 +1,5 @@
+Artifact               v1 lines        kept    modified  removed  added
+secure-bucket module        226   222 (98%)      3 (1%)   1 (0%)     93
+lab01 root                   35    33 (94%)      2 (6%)   0 (0%)      6
+lab04 workflow              143   141 (99%)      2 (1%)   0 (0%)     12
+session plans               112   103 (92%)      9 (8%)   0 (0%)      1

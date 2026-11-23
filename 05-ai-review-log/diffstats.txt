@@ -1,0 +1,9 @@
+Artifact                 v0 lines    kept  modified  removed  added
+secure-bucket module          138  138 (100%)      0 (0%)    0 (0%)     19
+lab01 root module              35   35 (100%)      0 (0%)    0 (0%)      0
+terraform test                 52    45 (87%)     7 (13%)    0 (0%)     17
+Rego policies                 107   100 (93%)      7 (7%)    0 (0%)     17
+lab04 workflow                130   124 (95%)      6 (5%)    0 (0%)     13
+validate workflow              41    40 (98%)      1 (2%)    0 (0%)      7
+pre/post test                 113   106 (94%)      7 (6%)    0 (0%)      0
+TOTAL (code+test items)       616 588 (95.5%)   28 (4.5%)  0 (0.0%)     73

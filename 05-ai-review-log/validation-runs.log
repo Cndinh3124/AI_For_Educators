@@ -1,0 +1,1166 @@
+$ (lab01-module-state) terraform plan -input=false -no-color -refresh=false -out=tfplan
+
+Planning failed. Terraform encountered an error while generating this plan.
+
+
+Error: Retrieving AWS account details: validating provider credentials: retrieving caller identity from STS: operation error STS: GetCallerIdentity, https response error StatusCode: 403, RequestID: c5bd6889-2b9a-4776-ab9c-b12b9d676f12, api error InvalidClientTokenId: The security token included in the request is invalid.
+
+  with provider["registry.terraform.io/hashicorp/aws"],
+  on main.tf line 15, in provider "aws":
+  15: provider "aws" {
+
+[exit 1]
+$ (lab01-module-state) terraform plan -input=false -no-color -refresh=false -out=tfplan
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # module.artifacts_bucket.data.aws_iam_policy_document.tls_only will be read during apply
+  # (config refers to values not yet known)
+ <= data "aws_iam_policy_document" "tls_only" {
+      + id            = (known after apply)
+      + json          = (known after apply)
+      + minified_json = (known after apply)
+
+      + statement {
+          + actions   = [
+              + "s3:*",
+            ]
+          + effect    = "Deny"
+          + resources = [
+              + (known after apply),
+              + (known after apply),
+            ]
+          + sid       = "DenyInsecureTransport"
+
+          + condition {
+              + test     = "Bool"
+              + values   = [
+                  + "false",
+                ]
+              + variable = "aws:SecureTransport"
+            }
+
+          + principals {
+              + identifiers = [
+                  + "*",
+                ]
+              + type        = "*"
+            }
+        }
+    }
+
+  # module.artifacts_bucket.aws_kms_key.this[0] will be created
+  + resource "aws_kms_key" "this" {
+      + arn                                = (known after apply)
+      + bypass_policy_lockout_safety_check = false
+      + customer_master_key_spec           = "SYMMETRIC_DEFAULT"
+      + deletion_window_in_days            = 30
+      + description                        = "SSE-KMS key for s3://iac-course-artifacts-dev-example"
+      + enable_key_rotation                = true
+      + id                                 = (known after apply)
+      + is_enabled                         = true
+      + key_id                             = (known after apply)
+      + key_usage                          = "ENCRYPT_DECRYPT"
+      + multi_region                       = (known after apply)
+      + policy                             = (known after apply)
+      + region                             = "ap-southeast-1"
+      + rotation_period_in_days            = (known after apply)
+      + tags                               = {
+          + "Environment" = "dev"
+          + "ManagedBy"   = "terraform"
+          + "Module"      = "secure-bucket"
+        }
+      + tags_all                           = {
+          + "Environment" = "dev"
+          + "ManagedBy"   = "terraform"
+          + "Module"      = "secure-bucket"
+          + "Project"     = "iac-course-sample"
+        }
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket.this will be created
+  + resource "aws_s3_bucket" "this" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = "iac-course-artifacts-dev-example"
+      + bucket_domain_name          = (known after apply)
+      + bucket_namespace            = (known after apply)
+      + bucket_prefix               = (known after apply)
+      + bucket_region               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = "ap-southeast-1"
+      + request_payer               = (known after apply)
+      + tags                        = {
+          + "Environment" = "dev"
+          + "ManagedBy"   = "terraform"
+          + "Module"      = "secure-bucket"
+        }
+      + tags_all                    = {
+          + "Environment" = "dev"
+          + "ManagedBy"   = "terraform"
+          + "Module"      = "secure-bucket"
+          + "Project"     = "iac-course-sample"
+        }
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_lifecycle_configuration.this will be created
+  + resource "aws_s3_bucket_lifecycle_configuration" "this" {
+      + bucket                                 = (known after apply)
+      + expected_bucket_owner                  = (known after apply)
+      + id                                     = (known after apply)
+      + region                                 = "ap-southeast-1"
+      + transition_default_minimum_object_size = "all_storage_classes_128K"
+
+      + rule {
+          + id     = "expire-noncurrent"
+          + status = "Enabled"
+            # (1 unchanged attribute hidden)
+
+          + noncurrent_version_expiration {
+              + noncurrent_days = 90
+            }
+        }
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_ownership_controls.this will be created
+  + resource "aws_s3_bucket_ownership_controls" "this" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "ap-southeast-1"
+
+      + rule {
+          + object_ownership = "BucketOwnerEnforced"
+        }
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_policy.this will be created
+  + resource "aws_s3_bucket_policy" "this" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + policy = (known after apply)
+      + region = "ap-southeast-1"
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_public_access_block.this will be created
+  + resource "aws_s3_bucket_public_access_block" "this" {
+      + block_public_acls       = true
+      + block_public_policy     = true
+      + bucket                  = (known after apply)
+      + id                      = (known after apply)
+      + ignore_public_acls      = true
+      + region                  = "ap-southeast-1"
+      + restrict_public_buckets = true
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_server_side_encryption_configuration.this will be created
+  + resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "ap-southeast-1"
+
+      + rule {
+          + blocked_encryption_types = (known after apply)
+          + bucket_key_enabled       = true
+
+          + apply_server_side_encryption_by_default {
+              + kms_master_key_id = (known after apply)
+              + sse_algorithm     = "aws:kms"
+            }
+        }
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_versioning.this will be created
+  + resource "aws_s3_bucket_versioning" "this" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "ap-southeast-1"
+
+      + versioning_configuration {
+          + mfa_delete = (known after apply)
+          + status     = "Enabled"
+        }
+    }
+
+Plan: 8 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + artifacts_bucket = (known after apply)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Saved the plan to: tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfplan"
+[exit 0]
+$ (03-labs) docker run --rm -v <repo>/03-labs:/data -w /data -v tflint-plugins:/root/.tflint.d ghcr.io/terraform-linters/tflint@sha256:65b9944a9274c4989492c1d79998c2801664bf8a55fddb4bd3a9e6d73a006ddc --chdir=modules/secure-bucket --config=/data/.tflint.hcl --format=compact
+[exit 0]
+$ (03-labs) docker run --rm -v <repo>/03-labs:/data -w /data -v tflint-plugins:/root/.tflint.d ghcr.io/terraform-linters/tflint@sha256:65b9944a9274c4989492c1d79998c2801664bf8a55fddb4bd3a9e6d73a006ddc --chdir=lab01-module-state --config=/data/.tflint.hcl --format=compact
+[exit 0]
+$ (03-labs) docker run --rm -v <repo>/03-labs:/tf bridgecrew/checkov:latest -d /tf/modules/secure-bucket --framework terraform --compact --quiet
+terraform scan results:
+
+Passed checks: 25, Failed checks: 5, Skipped checks: 0
+
+Check: CKV_AWS_300: "Ensure S3 lifecycle configuration sets period for aborting failed uploads"
+	FAILED for resource: aws_s3_bucket_lifecycle_configuration.this
+	File: /main.tf:63-76
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/bc-aws-300
+Check: CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
+	FAILED for resource: aws_s3_bucket.this
+	File: /main.tf:21-24
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-s3-bucket-has-cross-region-replication-enabled
+Check: CKV2_AWS_62: "Ensure S3 buckets should have event notifications enabled"
+	FAILED for resource: aws_s3_bucket.this
+	File: /main.tf:21-24
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/bc-aws-2-62
+Check: CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
+	FAILED for resource: aws_s3_bucket.this
+	File: /main.tf:21-24
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/s3-policies/s3-13-enable-logging
+Check: CKV2_AWS_64: "Ensure KMS key Policy is defined"
+	FAILED for resource: aws_kms_key.this
+	File: /main.tf:12-19
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-64
+
+[exit 1]
+$ (03-labs) docker run --rm -v <repo>/03-labs:/tf bridgecrew/checkov:latest -d /tf/modules/secure-bucket --framework terraform --compact --quiet
+terraform scan results:
+
+Passed checks: 26, Failed checks: 0, Skipped checks: 4
+
+
+[exit 0]
+$ (lab01-module-state) terraform plan -input=false -no-color -refresh=false -out=tfplan
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # module.artifacts_bucket.data.aws_iam_policy_document.tls_only will be read during apply
+  # (config refers to values not yet known)
+ <= data "aws_iam_policy_document" "tls_only" {
+      + id            = (known after apply)
+      + json          = (known after apply)
+      + minified_json = (known after apply)
+
+      + statement {
+          + actions   = [
+              + "s3:*",
+            ]
+          + effect    = "Deny"
+          + resources = [
+              + (known after apply),
+              + (known after apply),
+            ]
+          + sid       = "DenyInsecureTransport"
+
+          + condition {
+              + test     = "Bool"
+              + values   = [
+                  + "false",
+                ]
+              + variable = "aws:SecureTransport"
+            }
+
+          + principals {
+              + identifiers = [
+                  + "*",
+                ]
+              + type        = "*"
+            }
+        }
+    }
+
+  # module.artifacts_bucket.aws_kms_key.this[0] will be created
+  + resource "aws_kms_key" "this" {
+      + arn                                = (known after apply)
+      + bypass_policy_lockout_safety_check = false
+      + customer_master_key_spec           = "SYMMETRIC_DEFAULT"
+      + deletion_window_in_days            = 30
+      + description                        = "SSE-KMS key for s3://iac-course-artifacts-dev-example"
+      + enable_key_rotation                = true
+      + id                                 = (known after apply)
+      + is_enabled                         = true
+      + key_id                             = (known after apply)
+      + key_usage                          = "ENCRYPT_DECRYPT"
+      + multi_region                       = (known after apply)
+      + policy                             = (known after apply)
+      + region                             = "ap-southeast-1"
+      + rotation_period_in_days            = (known after apply)
+      + tags                               = {
+          + "Environment" = "dev"
+          + "ManagedBy"   = "terraform"
+          + "Module"      = "secure-bucket"
+        }
+      + tags_all                           = {
+          + "Environment" = "dev"
+          + "ManagedBy"   = "terraform"
+          + "Module"      = "secure-bucket"
+          + "Project"     = "iac-course-sample"
+        }
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket.this will be created
+  + resource "aws_s3_bucket" "this" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = "iac-course-artifacts-dev-example"
+      + bucket_domain_name          = (known after apply)
+      + bucket_namespace            = (known after apply)
+      + bucket_prefix               = (known after apply)
+      + bucket_region               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = "ap-southeast-1"
+      + request_payer               = (known after apply)
+      + tags                        = {
+          + "Environment" = "dev"
+          + "ManagedBy"   = "terraform"
+          + "Module"      = "secure-bucket"
+        }
+      + tags_all                    = {
+          + "Environment" = "dev"
+          + "ManagedBy"   = "terraform"
+          + "Module"      = "secure-bucket"
+          + "Project"     = "iac-course-sample"
+        }
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_lifecycle_configuration.this will be created
+  + resource "aws_s3_bucket_lifecycle_configuration" "this" {
+      + bucket                                 = (known after apply)
+      + expected_bucket_owner                  = (known after apply)
+      + id                                     = (known after apply)
+      + region                                 = "ap-southeast-1"
+      + transition_default_minimum_object_size = "all_storage_classes_128K"
+
+      + rule {
+          + id     = "expire-noncurrent"
+          + status = "Enabled"
+            # (1 unchanged attribute hidden)
+
+          + abort_incomplete_multipart_upload {
+              + days_after_initiation = 7
+            }
+
+          + filter {
+                # (1 unchanged attribute hidden)
+            }
+
+          + noncurrent_version_expiration {
+              + noncurrent_days = 90
+            }
+        }
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_ownership_controls.this will be created
+  + resource "aws_s3_bucket_ownership_controls" "this" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "ap-southeast-1"
+
+      + rule {
+          + object_ownership = "BucketOwnerEnforced"
+        }
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_policy.this will be created
+  + resource "aws_s3_bucket_policy" "this" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + policy = (known after apply)
+      + region = "ap-southeast-1"
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_public_access_block.this will be created
+  + resource "aws_s3_bucket_public_access_block" "this" {
+      + block_public_acls       = true
+      + block_public_policy     = true
+      + bucket                  = (known after apply)
+      + id                      = (known after apply)
+      + ignore_public_acls      = true
+      + region                  = "ap-southeast-1"
+      + restrict_public_buckets = true
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_server_side_encryption_configuration.this will be created
+  + resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "ap-southeast-1"
+
+      + rule {
+          + blocked_encryption_types = (known after apply)
+          + bucket_key_enabled       = true
+
+          + apply_server_side_encryption_by_default {
+              + kms_master_key_id = (known after apply)
+              + sse_algorithm     = "aws:kms"
+            }
+        }
+    }
+
+  # module.artifacts_bucket.aws_s3_bucket_versioning.this will be created
+  + resource "aws_s3_bucket_versioning" "this" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "ap-southeast-1"
+
+      + versioning_configuration {
+          + mfa_delete = (known after apply)
+          + status     = "Enabled"
+        }
+    }
+
+Plan: 8 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + artifacts_bucket = (known after apply)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Saved the plan to: tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfplan"
+[exit 0]
+$ (lab02-testing) terraform test -no-color
+tests/secure_bucket.tftest.hcl... in progress
+  run "creates_dedicated_kms_key_when_none_given"... fail
+
+Error: Unsupported attribute
+
+  on tests/secure_bucket.tftest.hcl line 12, in run "creates_dedicated_kms_key_when_none_given":
+  12:     condition     = length(module.bucket.aws_kms_key.this) == 1
+    ├────────────────
+    │ module.bucket is object with 3 attributes
+
+This object does not have an attribute named "aws_kms_key".
+
+Error: Unsupported attribute
+
+  on tests/secure_bucket.tftest.hcl line 17, in run "creates_dedicated_kms_key_when_none_given":
+  17:     condition     = module.bucket.aws_kms_key.this[0].enable_key_rotation == true
+    ├────────────────
+    │ module.bucket is object with 3 attributes
+
+This object does not have an attribute named "aws_kms_key".
+  run "public_access_fully_blocked"... skip
+  run "reuses_external_kms_key"... skip
+  run "rejects_invalid_environment"... skip
+  run "rejects_uppercase_bucket_name"... skip
+tests/secure_bucket.tftest.hcl... tearing down
+tests/secure_bucket.tftest.hcl... fail
+
+Failure! 0 passed, 1 failed, 4 skipped.
+[exit 1]
+$ (secure-bucket) terraform test -no-color
+tests/secure_bucket.tftest.hcl... in progress
+  run "creates_dedicated_kms_key_when_none_given"... pass
+  run "public_access_fully_blocked"... pass
+  run "reuses_external_kms_key"... pass
+  run "rejects_invalid_environment"... pass
+  run "rejects_uppercase_bucket_name"... pass
+  run "logging_enabled_when_target_given"... pass
+  run "abort_incomplete_multipart_uploads"... pass
+tests/secure_bucket.tftest.hcl... tearing down
+tests/secure_bucket.tftest.hcl... pass
+
+Success! 7 passed, 0 failed.
+[exit 0]
+## MUTATION TEST: rotation=false, restrict_public_buckets=false (expect 2 failures)
+$ (secure-bucket) terraform test -no-color
+tests/secure_bucket.tftest.hcl... in progress
+  run "creates_dedicated_kms_key_when_none_given"... fail
+
+Error: Test assertion failed
+
+  on tests/secure_bucket.tftest.hcl line 17, in run "creates_dedicated_kms_key_when_none_given":
+  17:     condition     = aws_kms_key.this[0].enable_key_rotation == true
+    ├────────────────
+    │ Diff:
+    │ --- actual
+    │ +++ expected
+    │ - false
+    │ + true
+
+
+KMS key rotation must be enabled.
+  run "public_access_fully_blocked"... fail
+
+Error: Test assertion failed
+
+  on tests/secure_bucket.tftest.hcl line 26, in run "public_access_fully_blocked":
+  26:     condition = alltrue([
+  27:       aws_s3_bucket_public_access_block.this.block_public_acls,
+  28:       aws_s3_bucket_public_access_block.this.block_public_policy,
+  29:       aws_s3_bucket_public_access_block.this.ignore_public_acls,
+  30:       aws_s3_bucket_public_access_block.this.restrict_public_buckets,
+  31:     ])
+    ├────────────────
+    │ aws_s3_bucket_public_access_block.this.block_public_acls is true
+    │ aws_s3_bucket_public_access_block.this.block_public_policy is true
+    │ aws_s3_bucket_public_access_block.this.ignore_public_acls is true
+    │ aws_s3_bucket_public_access_block.this.restrict_public_buckets is false
+
+All four public access block flags must be true.
+  run "reuses_external_kms_key"... pass
+  run "rejects_invalid_environment"... pass
+  run "rejects_uppercase_bucket_name"... pass
+  run "logging_enabled_when_target_given"... pass
+  run "abort_incomplete_multipart_uploads"... pass
+tests/secure_bucket.tftest.hcl... tearing down
+tests/secure_bucket.tftest.hcl... fail
+
+Failure! 5 passed, 2 failed.
+[exit 1]
+$ (policy) opa check --strict .
+[exit 0]
+$ (policy) opa fmt --list .
+[exit 0]
+$ (lab03-policy) conftest test --policy policy --all-namespaces fixtures/plan-compliant.json --no-color
+
+9 tests, 9 passed, 0 warnings, 0 failures, 0 exceptions
+[exit 0]
+$ (lab03-policy) conftest test --policy policy --all-namespaces fixtures/plan-noncompliant.json --no-color
+FAIL - fixtures/plan-noncompliant.json - terraform.s3 - aws_s3_bucket.reports: prod buckets require aws_s3_bucket_logging
+FAIL - fixtures/plan-noncompliant.json - terraform.s3 - aws_s3_bucket_public_access_block.reports: block_public_policy must be true
+FAIL - fixtures/plan-noncompliant.json - terraform.s3 - aws_s3_bucket_public_access_block.reports: restrict_public_buckets must be true
+FAIL - fixtures/plan-noncompliant.json - terraform.s3 - aws_s3_bucket_server_side_encryption_configuration.reports: sse_algorithm must be aws:kms (got AES256)
+FAIL - fixtures/plan-noncompliant.json - terraform.tags - aws_s3_bucket.reports: missing required tags {"Project"}
+FAIL - fixtures/plan-noncompliant.json - terraform.iam - aws_iam_policy.ci_admin: Allow with Action "*" is forbidden
+FAIL - fixtures/plan-noncompliant.json - terraform.iam - aws_iam_policy.ci_admin: service-wide action s3:* on Resource "*"
+
+9 tests, 2 passed, 0 warnings, 7 failures, 0 exceptions
+[exit 1]
+$ (policy) conftest test --policy policy --all-namespaces fixtures/plan-adversarial.json --no-color
+Error: running test: load: loading policies: load: 1 error occurred during loading: stat policy: no such file or directory
+[exit 1]
+## ADVERSARIAL TEST v0 policy: expect deny for aws_s3_bucket.unprotected
+$ (lab03-policy) conftest test --policy policy --all-namespaces fixtures/plan-adversarial.json --no-color
+
+9 tests, 9 passed, 0 warnings, 0 failures, 0 exceptions
+[exit 0]
+$ (lab03-policy) opa check --strict policy
+[exit 0]
+$ (lab03-policy) conftest test --policy policy --all-namespaces fixtures/plan-compliant.json --no-color
+
+9 tests, 9 passed, 0 warnings, 0 failures, 0 exceptions
+[exit 0]
+$ (lab03-policy) conftest test --policy policy --all-namespaces fixtures/plan-noncompliant.json --no-color
+FAIL - fixtures/plan-noncompliant.json - terraform.iam - aws_iam_policy.ci_admin: Allow with Action "*" is forbidden
+FAIL - fixtures/plan-noncompliant.json - terraform.iam - aws_iam_policy.ci_admin: service-wide action s3:* on Resource "*"
+FAIL - fixtures/plan-noncompliant.json - terraform.s3 - aws_s3_bucket.reports: prod buckets require aws_s3_bucket_logging
+FAIL - fixtures/plan-noncompliant.json - terraform.s3 - aws_s3_bucket_public_access_block.reports: block_public_policy must be true
+FAIL - fixtures/plan-noncompliant.json - terraform.s3 - aws_s3_bucket_public_access_block.reports: restrict_public_buckets must be true
+FAIL - fixtures/plan-noncompliant.json - terraform.s3 - aws_s3_bucket_server_side_encryption_configuration.reports: sse_algorithm must be aws:kms (got AES256)
+FAIL - fixtures/plan-noncompliant.json - terraform.tags - aws_s3_bucket.reports: missing required tags {"Project"}
+
+9 tests, 2 passed, 0 warnings, 7 failures, 0 exceptions
+[exit 1]
+$ (lab03-policy) conftest test --policy policy --all-namespaces fixtures/plan-adversarial.json --no-color
+FAIL - fixtures/plan-adversarial.json - terraform.s3 - aws_s3_bucket.unprotected: no aws_s3_bucket_public_access_block references this bucket
+
+9 tests, 8 passed, 0 warnings, 1 failure, 0 exceptions
+[exit 1]
+$ (lab03-policy) opa check --strict policy
+[exit 0]
+$ (lab03-policy) opa test policy -v
+policy/blast_radius_test.rego:13:
+data.terraform.blast_radius_test.test_delete_of_stateless_resource_is_allowed: PASS (6.347667ms)
+policy/blast_radius_test.rego:21:
+data.terraform.blast_radius_test.test_update_in_place_is_allowed: PASS (7.065666ms)
+policy/blast_radius_test.rego:5:
+data.terraform.blast_radius_test.test_replace_of_bucket_is_denied: PASS (7.147792ms)
+
+policy/tags_test.rego:22:
+data.terraform.tags_test.test_delete_not_checked_for_tags: PASS (567.458µs)
+
+policy/blast_radius_test.rego:29:
+data.terraform.blast_radius_test.test_mass_delete_warns: PASS (7.716333ms)
+
+policy/tags_test.rego:14:
+data.terraform.tags_test.test_fully_tagged_passes: PASS (7.895375ms)
+
+policy/iam_test.rego:23:
+data.terraform.iam_test.test_deny_wildcard_is_not_flagged: PASS (8.013625ms)
+
+policy/tags_test.rego:5:
+data.terraform.tags_test.test_missing_tags_reported: PASS (1.459042ms)
+
+policy/iam_test.rego:11:
+data.terraform.iam_test.test_scoped_policy_passes: PASS (8.555416ms)
+policy/iam_test.rego:19:
+data.terraform.iam_test.test_single_statement_object_is_handled: PASS (8.59375ms)
+--------------------------------------------------------------------------------
+PASS: 10/10
+[exit 0]
+$ (lab04-ci) actionlint -color=never .github/workflows/terraform.yml
+invalid boolean value "never" for -color: parse error
+Usage: actionlint [FLAGS] [FILES...] [-]
+
+  actionlint is a linter for GitHub Actions workflow files.
+
+  To check all YAML files in current repository, just run actionlint without
+  arguments. It automatically finds the nearest '.github/workflows' directory:
+
+    $ actionlint
+
+  To check specific files, pass the file paths as arguments:
+
+    $ actionlint file1.yaml file2.yaml
+
+  To check content which is not saved in file yet (e.g. output from some
+  command), pass - argument. It reads stdin and checks it as workflow file:
+
+    $ actionlint -
+
+  To serialize errors into JSON, use -format option. It allows to format error
+  messages flexibly with Go template syntax.
+
+    $ actionlint -format '{{json .}}'
+
+Documents:
+
+  - List of checks: https://github.com/rhysd/actionlint/tree/v1.7.12/docs/checks.md
+  - Usage:          https://github.com/rhysd/actionlint/tree/v1.7.12/docs/usage.md
+  - Configuration:  https://github.com/rhysd/actionlint/tree/v1.7.12/docs/config.md
+
+Flags:
+  -color
+    	Always enable colorful output. This is useful to force colorful outputs
+  -config-file string
+    	File path to config file
+  -debug
+    	Enable debug output (for development)
+  -format string
+    	Custom template to format error messages in Go template syntax. See the usage documentation for more details
+  -ignore value
+    	Regular expression matching to error messages you want to ignore. This flag is repeatable
+  -init-config
+    	Generate default config file at .github/actionlint.yaml in current project
+  -no-color
+    	Disable colorful output
+  -oneline
+    	Use one line per one error. Useful for reading error messages from programs
+  -pyflakes string
+    	Command name or file path of "pyflakes" external command. If empty, pyflakes integration will be disabled (default "pyflakes")
+  -shellcheck string
+    	Command name or file path of "shellcheck" external command. If empty, shellcheck integration will be disabled (default "shellcheck")
+  -stdin-filename string
+    	File name when reading input from stdin (default "<stdin>")
+  -verbose
+    	Enable verbose output
+  -version
+    	Show version and how this binary was installed
+[exit 2]
+$ (lab04-ci) zizmor --no-progress --offline .github/workflows/terraform.yml
+ INFO zizmor: 🌈 zizmor v1.33.1
+ INFO audit: zizmor: 🌈 completed .github/workflows/terraform.yml
+No findings to report. Good job! (2 suppressed)
+[exit 0]
+$ (lab04-ci) actionlint -no-color .github/workflows/terraform.yml
+[exit 0]
+$ (lab04-ci) zizmor --no-progress --offline --persona=auditor .github/workflows/terraform.yml
+ INFO zizmor: 🌈 zizmor v1.33.1
+ INFO audit: zizmor: 🌈 completed .github/workflows/terraform.yml
+help[undocumented-permissions]: permissions without explanatory comments
+  --> .github/workflows/terraform.yml:78:7
+   |
+78 |       id-token: write
+   |       ^^^^^^^^^^^^^^^ needs an explanatory comment
+   |
+   = note: audit confidence → High
+   = help: audit documentation → https://docs.zizmor.sh/audits/#undocumented-permissions
+
+help[undocumented-permissions]: permissions without explanatory comments
+   --> .github/workflows/terraform.yml:129:7
+    |
+129 |       id-token: write
+    |       ^^^^^^^^^^^^^^^ needs an explanatory comment
+    |
+    = note: audit confidence → High
+    = help: audit documentation → https://docs.zizmor.sh/audits/#undocumented-permissions
+
+2 findings: 0 informational, 2 low, 0 medium, 0 high
+[exit 12]
+$ (lab04-ci) actionlint -no-color .github/workflows/terraform.yml
+[exit 0]
+$ (lab04-ci) zizmor --no-progress --offline --persona=auditor .github/workflows/terraform.yml
+ INFO zizmor: 🌈 zizmor v1.33.1
+ INFO audit: zizmor: 🌈 completed .github/workflows/terraform.yml
+No findings to report. Good job!
+[exit 0]
+$ (lab01-module-state) terraform providers lock -platform=linux_amd64 -platform=darwin_arm64 -platform=darwin_amd64 -platform=windows_amd64 -no-color
+- Fetching hashicorp/aws 6.73.0 for linux_amd64...
+- Retrieved hashicorp/aws 6.73.0 for linux_amd64 (signed by HashiCorp)
+- Fetching hashicorp/aws 6.73.0 for darwin_arm64...
+- Retrieved hashicorp/aws 6.73.0 for darwin_arm64 (signed by HashiCorp)
+- Fetching hashicorp/aws 6.73.0 for darwin_amd64...
+- Retrieved hashicorp/aws 6.73.0 for darwin_amd64 (signed by HashiCorp)
+- Fetching hashicorp/aws 6.73.0 for windows_amd64...
+- Retrieved hashicorp/aws 6.73.0 for windows_amd64 (signed by HashiCorp)
+- Obtained hashicorp/aws checksums for linux_amd64; Additional checksums for this platform are now tracked in the lock file
+- Obtained hashicorp/aws checksums for darwin_arm64; All checksums for this platform were already tracked in the lock file
+- Obtained hashicorp/aws checksums for darwin_amd64; Additional checksums for this platform are now tracked in the lock file
+- Obtained hashicorp/aws checksums for windows_amd64; Additional checksums for this platform are now tracked in the lock file
+
+Success! Terraform has updated the lock file.
+
+Review the changes in .terraform.lock.hcl and then commit to your
+version control system to retain the new checksums.
+
+[exit 0]
+## LAB05 seeded-fault verification (each MUST fail with the intended error)
+$ (t1-for-each) terraform plan -refresh=false -input=false -no-color
+
+Error: Invalid for_each argument
+
+  on main.tf line 8, in resource "aws_s3_bucket" "this":
+   8:   for_each = var.bucket_names
+    ├────────────────
+    │ var.bucket_names is a list of string
+
+The given "for_each" argument value is unsuitable: the "for_each" argument
+must be a map, or set of strings, and you have provided a value of type list
+of string.
+[exit 1]
+$ (t2-unknown-count) terraform plan -refresh=false -input=false -no-color
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform planned the following actions, but then encountered a problem:
+
+  # aws_kms_key.logs will be created
+  + resource "aws_kms_key" "logs" {
+      + arn                                = (known after apply)
+      + bypass_policy_lockout_safety_check = false
+      + customer_master_key_spec           = "SYMMETRIC_DEFAULT"
+      + description                        = "logs key"
+      + enable_key_rotation                = true
+      + id                                 = (known after apply)
+      + is_enabled                         = true
+      + key_id                             = (known after apply)
+      + key_usage                          = "ENCRYPT_DECRYPT"
+      + multi_region                       = (known after apply)
+      + policy                             = (known after apply)
+      + region                             = "ap-southeast-1"
+      + rotation_period_in_days            = (known after apply)
+      + tags_all                           = (known after apply)
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Error: Invalid count argument
+
+  on main.tf line 9, in resource "aws_cloudwatch_log_group" "app":
+   9:   count      = aws_kms_key.logs.arn != "" ? 1 : 0
+
+The "count" value depends on resource attributes that cannot be determined
+until apply, so Terraform cannot predict how many instances will be created.
+To work around this, use the -target argument to first apply only the
+resources that the count depends on.
+[exit 1]
+$ (t3-cycle) terraform plan -refresh=false -input=false -no-color
+
+Error: Cycle:
+  aws_security_group.db
+  aws_security_group.app
+
+[exit 1]
+$ (t4-version-conflict) terraform init -input=false -no-color
+Initializing the backend...
+
+Initializing modules...
+- legacy in modules/legacy
+
+Initializing provider plugins...
+- Finding hashicorp/aws versions matching "~> 5.0, ~> 6.0"...
+
+Error: Failed to query available provider packages
+
+Could not retrieve the list of available versions for provider hashicorp/aws:
+no available releases match the given constraints ~> 5.0, ~> 6.0
+
+To see which modules are currently depending on hashicorp/aws and what
+versions are specified, run the following command:
+    terraform providers
+[exit 1]
+$ (t5-refactor-moved) terraform plan -input=false -no-color
+terraform_data.artifact_store: Refreshing state... [id=9ecbcabb-dc5e-dd84-0225-ef5019de743a]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+  - destroy
+
+Terraform will perform the following actions:
+
+  # terraform_data.artifact_store will be destroyed
+  # (because terraform_data.artifact_store is not in configuration)
+  - resource "terraform_data" "artifact_store" {
+      - id     = "9ecbcabb-dc5e-dd84-0225-ef5019de743a" -> null
+      - input  = {
+          - name = "iac-course-artifacts"
+          - tier = "standard"
+        } -> null
+      - output = {
+          - name = "iac-course-artifacts"
+          - tier = "standard"
+        } -> null
+    }
+
+  # terraform_data.artifacts will be created
+  + resource "terraform_data" "artifacts" {
+      + id     = (known after apply)
+      + input  = {
+          + name = "iac-course-artifacts"
+          + tier = "standard"
+        }
+      + output = (known after apply)
+    }
+
+Plan: 1 to add, 0 to change, 1 to destroy.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
+[exit 0]
+$ (t6-policy-gate) conftest test --policy ../../lab03-policy/policy --all-namespaces plan.json --no-color
+FAIL - plan.json - terraform.tags - module.artifacts_bucket.aws_kms_key.this[0]: missing required tags {"Project"}
+FAIL - plan.json - terraform.tags - module.artifacts_bucket.aws_s3_bucket.this: missing required tags {"Project"}
+
+10 tests, 8 passed, 0 warnings, 2 failures, 0 exceptions
+[exit 1]
+## LAB05 answer-key verification (each fix MUST succeed)
+$ (t1-for-each) terraform plan -refresh=false -input=false -no-color
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_s3_bucket.this["iac-course-assets-example"] will be created
+  + resource "aws_s3_bucket" "this" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = "iac-course-assets-example"
+      + bucket_domain_name          = (known after apply)
+      + bucket_namespace            = (known after apply)
+      + bucket_prefix               = (known after apply)
+      + bucket_region               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = "ap-southeast-1"
+      + request_payer               = (known after apply)
+      + tags_all                    = (known after apply)
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+  # aws_s3_bucket.this["iac-course-logs-example"] will be created
+  + resource "aws_s3_bucket" "this" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = "iac-course-logs-example"
+      + bucket_domain_name          = (known after apply)
+      + bucket_namespace            = (known after apply)
+      + bucket_prefix               = (known after apply)
+      + bucket_region               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = "ap-southeast-1"
+      + request_payer               = (known after apply)
+      + tags_all                    = (known after apply)
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
+[exit 0]
+$ (t2-unknown-count) terraform plan -refresh=false -input=false -no-color
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_cloudwatch_log_group.app[0] will be created
+  + resource "aws_cloudwatch_log_group" "app" {
+      + arn                         = (known after apply)
+      + deletion_protection_enabled = (known after apply)
+      + id                          = (known after apply)
+      + kms_key_id                  = (known after apply)
+      + log_group_class             = (known after apply)
+      + name                        = "/iac-course/app"
+      + name_prefix                 = (known after apply)
+      + region                      = "ap-southeast-1"
+      + retention_in_days           = 0
+      + skip_destroy                = false
+      + tags_all                    = (known after apply)
+    }
+
+  # aws_kms_key.logs will be created
+  + resource "aws_kms_key" "logs" {
+      + arn                                = (known after apply)
+      + bypass_policy_lockout_safety_check = false
+      + customer_master_key_spec           = "SYMMETRIC_DEFAULT"
+      + description                        = "logs key"
+      + enable_key_rotation                = true
+      + id                                 = (known after apply)
+      + is_enabled                         = true
+      + key_id                             = (known after apply)
+      + key_usage                          = "ENCRYPT_DECRYPT"
+      + multi_region                       = (known after apply)
+      + policy                             = (known after apply)
+      + region                             = "ap-southeast-1"
+      + rotation_period_in_days            = (known after apply)
+      + tags_all                           = (known after apply)
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
+[exit 0]
+$ (t3-cycle) terraform plan -refresh=false -input=false -no-color
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_security_group.app will be created
+  + resource "aws_security_group" "app" {
+      + arn                    = (known after apply)
+      + description            = "Managed by Terraform"
+      + egress                 = (known after apply)
+      + id                     = (known after apply)
+      + ingress                = (known after apply)
+      + name                   = "app"
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + region                 = "ap-southeast-1"
+      + revoke_rules_on_delete = false
+      + tags_all               = (known after apply)
+      + vpc_id                 = "vpc-0123456789abcdef0"
+    }
+
+  # aws_security_group.db will be created
+  + resource "aws_security_group" "db" {
+      + arn                    = (known after apply)
+      + description            = "Managed by Terraform"
+      + egress                 = (known after apply)
+      + id                     = (known after apply)
+      + ingress                = (known after apply)
+      + name                   = "db"
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + region                 = "ap-southeast-1"
+      + revoke_rules_on_delete = false
+      + tags_all               = (known after apply)
+      + vpc_id                 = "vpc-0123456789abcdef0"
+    }
+
+  # aws_vpc_security_group_egress_rule.app_to_db will be created
+  + resource "aws_vpc_security_group_egress_rule" "app_to_db" {
+      + arn                          = (known after apply)
+      + from_port                    = 5432
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-southeast-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 5432
+    }
+
+  # aws_vpc_security_group_ingress_rule.db_from_app will be created
+  + resource "aws_vpc_security_group_ingress_rule" "db_from_app" {
+      + arn                          = (known after apply)
+      + from_port                    = 5432
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-southeast-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 5432
+    }
+
+Plan: 4 to add, 0 to change, 0 to destroy.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
+[exit 0]
+$ (t4-version-conflict) terraform init -input=false -no-color
+Initializing the backend...
+
+Initializing modules...
+- legacy in modules/legacy
+
+Initializing provider plugins...
+- Finding hashicorp/aws versions matching ">= 5.0.0, ~> 6.0, < 7.0.0"...
+- Installing hashicorp/aws v6.73.0...
+- Installed hashicorp/aws v6.73.0 (signed by HashiCorp)
+
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+[exit 0]
+$ (t5-refactor-moved) terraform plan -input=false -no-color
+terraform_data.artifacts: Refreshing state... [id=9ecbcabb-dc5e-dd84-0225-ef5019de743a]
+
+Terraform will perform the following actions:
+
+  # terraform_data.artifact_store has moved to terraform_data.artifacts
+    resource "terraform_data" "artifacts" {
+        id     = "9ecbcabb-dc5e-dd84-0225-ef5019de743a"
+        # (2 unchanged attributes hidden)
+    }
+
+Plan: 0 to add, 0 to change, 0 to destroy.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
+[exit 0]
+$ (t6-policy-gate) conftest test --policy <repo>/03-labs/lab03-policy/policy --all-namespaces plan.json --no-color
+
+9 tests, 9 passed, 0 warnings, 0 failures, 0 exceptions
+[exit 0]

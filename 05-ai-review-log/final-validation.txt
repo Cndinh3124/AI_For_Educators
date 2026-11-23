@@ -1,0 +1,61 @@
+
+== 1. terraform fmt ==
+  PASS fmt
+
+== 2. secure-bucket module: validate + terraform test ==
+tests/secure_bucket.tftest.hcl... in progress
+  run "creates_dedicated_kms_key_when_none_given"... pass
+  run "public_access_fully_blocked"... pass
+  run "reuses_external_kms_key"... pass
+  run "rejects_invalid_environment"... pass
+  run "rejects_uppercase_bucket_name"... pass
+  run "logging_enabled_when_target_given"... pass
+  run "abort_incomplete_multipart_uploads"... pass
+  run "key_policy_is_explicit"... pass
+  run "rejects_own_key_without_admins"... pass
+  run "key_usage_restricted_to_s3"... pass
+tests/secure_bucket.tftest.hcl... tearing down
+tests/secure_bucket.tftest.hcl... pass
+
+Success! 10 passed, 0 failed.
+  PASS module tests
+
+== 3. lab01: offline plan -> plan JSON -> conftest ==
+
+9 tests, 9 passed, 0 warnings, 0 failures, 0 exceptions
+  PASS lab01 plan is policy-compliant
+
+== 4. policies: opa check/fmt/test + fixtures ==
+  PASS opa check/fmt
+PASS: 10/10
+  PASS opa unit tests
+
+9 tests, 9 passed, 0 warnings, 0 failures, 0 exceptions
+  PASS compliant fixture passes
+  PASS noncompliant fixture is denied (7 violations)
+  PASS adversarial fixture is denied (1 violations)
+
+== 5. tflint (aws ruleset) + checkov ==
+  PASS tflint
+terraform scan results:
+
+Passed checks: 28, Failed checks: 0, Skipped checks: 3
+
+
+  PASS checkov
+
+== 6. workflows: actionlint + zizmor ==
+  PASS actionlint
+ INFO zizmor: 🌈 zizmor v1.33.1
+ INFO audit: zizmor: 🌈 completed <repo>/.github/workflows/validate.yml
+ INFO audit: zizmor: 🌈 completed <repo>/03-labs/lab04-ci/.github/workflows/terraform.yml
+No findings to report. Good job!
+  PASS zizmor (auditor)
+
+== 7. lab05: every seeded fault still fails ==
+  PASS t1-for-each fails as intended
+  PASS t2-unknown-count fails as intended
+  PASS t3-cycle fails as intended
+  PASS t4 fails as intended
+
+ALL CHECKS PASSED
