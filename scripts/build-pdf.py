@@ -55,11 +55,15 @@ pre { background:#0b1220; color:#e2e8f0; padding:8px 10px; border-radius:6px; fo
 pre code { background:none; color:inherit; padding:0; font-size:inherit; }
 blockquote { border-left:3px solid var(--accent); margin:8px 0; padding:4px 10px; background:#ecfeff; color:#164e63; }
 .doc { break-before:page; }
-.part { break-before:page; display:flex; flex-direction:column; justify-content:center; height:240mm; }
+.part { break-before:page; break-after:page; display:flex; flex-direction:column; justify-content:center; height:230mm; }
+.keep { break-inside:avoid; }
+thead { display:table-header-group; }
+li, blockquote, .src { break-inside:avoid; }
+.src { break-after:avoid; }
 .part h1 { font-size:26pt; border:none; }
 .part p { color:var(--muted); font-size:11pt; }
 .src { color:var(--muted); font-size:8pt; margin:0 0 8px; font-family:'SF Mono',Menlo,monospace; }
-.cover { height:240mm; display:flex; flex-direction:column; justify-content:space-between; }
+.cover { height:230mm; display:flex; flex-direction:column; justify-content:space-between; }
 .cover .kicker { color:var(--accent); font-weight:600; letter-spacing:.08em; text-transform:uppercase; font-size:9pt; }
 .cover h1 { font-size:28pt; border:none; color:var(--ink); line-height:1.15; margin-top:8px; }
 .cover .sub { font-size:12pt; color:var(--muted); }
@@ -72,8 +76,15 @@ blockquote { border-left:3px solid var(--accent); margin:8px 0; padding:4px 10px
 
 def md(text):
     text = re.sub(r"\]\((?!https?://)([^)]+)\)", r"](#)", text)   # repo-relative links are not navigable in a PDF
-    return markdown.markdown(text, extensions=["tables", "fenced_code", "codehilite", "sane_lists"],
-                             extension_configs={"codehilite": {"guess_lang": False, "css_class": "codehilite"}})
+    return keep_short(markdown.markdown(text, extensions=["tables", "fenced_code", "codehilite", "sane_lists"],
+                             extension_configs={"codehilite": {"guess_lang": False, "css_class": "codehilite"}}))
+
+def keep_short(h):
+    """Avoid splitting short tables (<=14 rows) and code blocks (<=35 lines) across pages."""
+    h = re.sub(r"<table>(.*?)</table>", lambda m: ('<table class="keep">' if m.group(1).count("<tr") <= 14 else "<table>")
+               + m.group(1) + "</table>", h, flags=re.S)
+    return re.sub(r'<div class="codehilite">(.*?)</div>', lambda m: ('<div class="codehilite keep">' if m.group(1).count("\n") <= 35
+               else '<div class="codehilite">') + m.group(1) + "</div>", h, flags=re.S)
 
 def main():
     body = ['''<section class="cover"><div>
@@ -91,7 +102,7 @@ def main():
         if title != "Overview":
             body.append(f'<section class="part"><h1>{html.escape(title)}</h1></section>')
         for i, f in enumerate(files):
-            cls = "doc" if (title == "Overview" or i > 0) else ""
+            cls = "doc" if (title == "Overview" or i > 0) else "doc first"
             body.append(f'<section class="{cls}"><div class="src">{f}</div>{md((ROOT / f).read_text())}</section>')
     body.append('<section class="part"><h1>Appendix — Code tiêu biểu &amp; kết quả kiểm chứng</h1>'
                 '<p>Toàn bộ code nằm trong repo; đây là trích các file trọng tâm, đúng nguyên văn bản cuối.</p></section>')
